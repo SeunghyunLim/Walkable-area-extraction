@@ -1,0 +1,1 @@
+# Walkable-area-extraction
