@@ -12,3 +12,10 @@ Parameters: __lenWidth__ is the actual width of the map in _cm_ scale, and __GRI
 | Original Image (SLAM) | Cropped Image | Binary List | DISTANCECOSTMAP |
 |---|---|---|---|
 |![a](https://github.com/SeunghyunLim/Walkable-area-extraction/blob/master/img/original_map_image.png)|![a](https://github.com/SeunghyunLim/Walkable-area-extraction/blob/master/img/cropped_map_image.png)|![a](https://github.com/SeunghyunLim/Walkable-area-extraction/blob/master/img/cropped_binary_list.png)|![a](https://github.com/SeunghyunLim/Walkable-area-extraction/blob/master/img/DISTANCECOSTMAP.png)|
+
+### 2. walkable_area_contour
+```bash
+def walkable_area_contour(maze, x_real, y_real, verbose=0):
+  return (contours[idxLargest], contours[reference_idx], idxLargest, reference_idx)
+```
+Find walkable and reachable area from the binary map, considering the current robot position, _x_real_ and _y_real_. After find every contour in the binary map, 
