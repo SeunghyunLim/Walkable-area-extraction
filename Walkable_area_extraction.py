@@ -97,29 +97,43 @@ def walkable_area_contour(maze, x_real, y_real, verbose=0):
     idxLargest = 0
     areaLargest = 0
     contour_list = []
-    # loop over the contours
+    smaller_contour_index = []
+    ordered_contour_list = []
 
     for (i, c) in enumerate(contours):
-        # compute the bounding box of the contour, then use the
-        # bounding box coordinates to derive the aspect ratio
+        # compute the bounding box of the contour, then save their index with
+        # the size of the bounding box
         (x, y, w, h) = cv2.boundingRect(c)
-        contour_list.append([i, w * h])
-    print(contour_list)
-
+        area = cv2.contourArea(c)
+        contour_list.append([i, area])
+    print("contour list :", contour_list)
+    # sort the contour list according to their size of the bounding box
+    ordered_contour_list = sorted(contour_list, key = lambda x : x[1]) #smallest to largest
+    rev_ordered_contour_list = list(reversed(ordered_contour_list))  #ordered_contour_list.reverse() #largest to smallest
+    print(rev_ordered_contour_list)
     for (i, c) in enumerate(contours):
-        if cv2.pointPolygonTest(contours[contour_list[i][0]], (x_real * 7, y_real * 7), False) == 1:
-            idxLargest = i
+        if cv2.pointPolygonTest(contours[rev_ordered_contour_list[i][0]], (x_real * 7, y_real * 7), False) == 1:
+            idxLargest = rev_ordered_contour_list[i][0]
+            num_of_smaller = len(contour_list)-(i+1)
+            for j in range(num_of_smaller):
+                smaller_contour_index.append(ordered_contour_list[j][0])
             reference_idx = i-1
-            print(idxLargest, reference_idx)
-            cv2.drawContours(contoured_maze, [contours[idxLargest]], 0, (112, 0, 0), 3)
+            #print(idxLargest, reference_idx)
             break
-    # cv2.drawContours(contoured_maze, [contours[idxLargest]], 0, (112, 0, 0), 3)  # blue
+    # idxLargest means the index of the largest contour that includes current position
+    # smaller_contour_list means the list of indext that has smaller bonding boxes than idxLargest
+
+    # check the contours in smaller_contour_index whether they are included in idxLargest or not
+#    for k in smaller_contour_index:
+#        cnt = contours[k]
+#        M = cv2.moments
+
 
     if idxLargest == 0:
         reference_idx = 0
 
     cv2.drawContours(contoured_maze, [contours[idxLargest]], 0, (112, 0, 0), 3)
-    cv2.drawContours(contoured_maze, [contours[reference_idx]], 0, (112, 0, 0), 3)
+#    cv2.drawContours(contoured_maze, [contours[reference_idx]], 0, (112, 0, 0), 3)
 
     if verbose:
         cv2.imshow("contoured", contoured_maze)
@@ -148,8 +162,8 @@ def curiosityEngine(area, x_range, y_range, verbose=0):
         print("Curiosity Engine Calculation Time :", time.time() - starttime)
 
 if __name__ == '__main__':
-    img = cv2.imread("E5_223.jpg")
-    # img = cv2.imread("wtest.PNG")
+    #img = cv2.imread("E5_223.jpg")
+    img = cv2.imread("test3.png")
     cv2.imshow('Sample A* algorithm run with distance cost', img)
     cv2.waitKey(0)
     starttime = time.time()
@@ -159,15 +173,20 @@ if __name__ == '__main__':
     area = walkable_area_contour(maze, x_real_initial, y_real_initial, verbose=1)
     print("time :", time.time() - starttime)
     while True:
-        # start = (7, 7)
-        # start = (10, 25)
-        start = (x_real_initial, y_real_initial)
-        end = curiosityEngine(area, mapWidth, mapHeight)
-        print("Start = ", start, "and End = ", end)
-        showmaze = np.array(maze).astype(np.uint8)
-        showmaze *= 255
-        showmaze[start[0]][start[1]] = 150
-        showmaze[end[0]][end[1]] = 150
-        showmaze = cv2.resize(showmaze, None, fx=7, fy=7, interpolation=cv2.INTER_NEAREST)
-        cv2.imshow('Walkable Area Extraction', showmaze)
-        cv2.waitKey(0)
+        try:
+            # start = (7, 7)
+            # start = (10, 25)
+            start = (x_real_initial, y_real_initial)
+            end = curiosityEngine(area, mapWidth, mapHeight)
+            print("Start = ", start, "and End = ", end)
+            showmaze = np.array(maze).astype(np.uint8)
+            showmaze *= 255
+            showmaze[start[0]][start[1]] = 150
+            showmaze[end[0]][end[1]] = 150
+            showmaze = cv2.resize(showmaze, None, fx=7, fy=7, interpolation=cv2.INTER_NEAREST)
+            cv2.imshow('Walkable Area Extraction', showmaze)
+            cv2.waitKey(0)
+        except KeyboardInterrupt:
+            print("interrupted")
+            cv2.destroyallwindows()
+            break
