@@ -93,8 +93,9 @@ def walkable_area_contour(maze, x_real, y_real, verbose=0):
     maze = cv2.resize(maze, None, fx=7, fy=7, interpolation=cv2.INTER_NEAREST)
     _, reversed_maze = cv2.threshold(maze, 112, 255, cv2.THRESH_BINARY_INV)
     contoured_maze = reversed_maze
-    contours, hierarchy = cv2.findContours(reversed_maze, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+    contours, hierarchy = cv2.findContours(reversed_maze, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     idxLargest = 0
+    idxException = []
     areaLargest = 0
     contour_list = []
     smaller_contour_index = []
@@ -110,7 +111,7 @@ def walkable_area_contour(maze, x_real, y_real, verbose=0):
     # sort the contour list according to their size of the bounding box
     ordered_contour_list = sorted(contour_list, key = lambda x : x[1]) #smallest to largest
     rev_ordered_contour_list = list(reversed(ordered_contour_list))  #ordered_contour_list.reverse() #largest to smallest
-    print(rev_ordered_contour_list)
+    print("larest to smallest : ", rev_ordered_contour_list)
     for (i, c) in enumerate(contours):
         if cv2.pointPolygonTest(contours[rev_ordered_contour_list[i][0]], (x_real * 7, y_real * 7), False) == 1:
             idxLargest = rev_ordered_contour_list[i][0]
@@ -127,12 +128,30 @@ def walkable_area_contour(maze, x_real, y_real, verbose=0):
 #    for k in smaller_contour_index:
 #        cnt = contours[k]
 #        M = cv2.moments
-
+    for i in smaller_contour_index:
+        if hierarchy[0][i][3] == -1:
+            # when the contour with i index are not included in any other contour
+            continue
+        elif hierarchy[0][i][3] == idxLargest:
+            # when the contour with i index are direct child of the idxLargest contour
+            idxException.append(i)
+            continue
+        else :
+            j = hierarchy[0][i][3]
+            while j != -1:
+                if j == idxLargest:
+                    idxException.append(i)
+                    break
+                else:
+                    j = hierarchy[0][j][3]
+    print(idxException)
 
     if idxLargest == 0:
         reference_idx = 0
-
+    print(smaller_contour_index)
     cv2.drawContours(contoured_maze, [contours[idxLargest]], 0, (112, 0, 0), 3)
+    for i in idxException:
+        cv2.drawContours(contoured_maze, [contours[i]], 0, (112, 0, 0), 3)
 #    cv2.drawContours(contoured_maze, [contours[reference_idx]], 0, (112, 0, 0), 3)
 
     if verbose:
@@ -163,7 +182,7 @@ def curiosityEngine(area, x_range, y_range, verbose=0):
 
 if __name__ == '__main__':
     #img = cv2.imread("E5_223.jpg")
-    img = cv2.imread("test3.png")
+    img = cv2.imread("lobby3.jpg")
     cv2.imshow('Sample A* algorithm run with distance cost', img)
     cv2.waitKey(0)
     starttime = time.time()
