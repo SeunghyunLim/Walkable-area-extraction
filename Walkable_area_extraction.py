@@ -100,6 +100,7 @@ def walkable_area_contour(maze, x_real, y_real, verbose=0):
     contour_list = []
     smaller_contour_index = []
     ordered_contour_list = []
+    contourExceptions = []
 
     for (i, c) in enumerate(contours):
         # compute the bounding box of the contour, then save their index with
@@ -149,23 +150,30 @@ def walkable_area_contour(maze, x_real, y_real, verbose=0):
     if idxLargest == 0:
         reference_idx = 0
     print(smaller_contour_index)
-    cv2.drawContours(contoured_maze, [contours[idxLargest]], 0, (112, 0, 0), 3)
+
     for i in idxException:
-        cv2.drawContours(contoured_maze, [contours[i]], 0, (112, 0, 0), 3)
-#    cv2.drawContours(contoured_maze, [contours[reference_idx]], 0, (112, 0, 0), 3)
+        contourExceptions.append(contours[i])
 
     if verbose:
+        cv2.drawContours(contoured_maze, [contours[idxLargest]], 0, (112, 0, 0), 3)
+        for i in idxException:
+            cv2.drawContours(contoured_maze, [contours[i]], 0, (112, 0, 0), 3)
         cv2.imshow("contoured", contoured_maze)
         cv2.waitKey(0)
 
-    return (contours[idxLargest], contours[reference_idx], idxLargest, reference_idx)
+    return (contours[idxLargest], contourExceptions, idxLargest, idxException)
+
 
 def curiosityEngine(area, x_range, y_range, verbose=0):
     starting_time = time.time()
     contour = area[0]
-    reference_contour = area[1]
+    contourExceptions = area[1]
     idxLargest = area[2]
+    idxException = area[3]
+
     while True:
+        print("hello")
+        count = 0
         x = random.randrange(x_range)
         y = random.randrange(y_range)
         #print(cv2.pointPolygonTest(contour, (x * 7, y * 7), False))]
@@ -174,9 +182,15 @@ def curiosityEngine(area, x_range, y_range, verbose=0):
                 return (y, x)
                 break
         if cv2.pointPolygonTest(contour, (x * 7, y * 7), False) == 1:
-            if cv2.pointPolygonTest(reference_contour, (x * 7, y * 7), False) == -1:
+            for c in contourExceptions:
+                if cv2.pointPolygonTest(c, (x * 7, y * 7), False) == -1:
+                    count += 1
+            if count == len(idxException):
                 return (y, x)
                 break
+        #    if cv2.pointPolygonTest(reference_contour, (x * 7, y * 7), False) == -1:
+        #        return (y, x)
+        #        break
     if verbose:
         print("Curiosity Engine Calculation Time :", time.time() - starttime)
 
