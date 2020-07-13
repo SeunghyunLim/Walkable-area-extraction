@@ -16,11 +16,12 @@ Parameters: __lenWidth__ is the actual width of the map in _cm_ scale, and __GRI
 ### 2. walkable_area_contour
 ```bash
 def walkable_area_contour(maze, x_real, y_real, verbose=0):
-  return (contours[idxLargest], contours[reference_idx], idxLargest, reference_idx)
+  return (contours[idxLargest], contourExceptions, idxLargest, idxException)
 ```
 Find walkable and reachable area from the binary map, considering the current robot position, _x_real_ and _y_real_. 
 After find every contour in the binary map, rearrange contours according to their contour area size. 
 First, find the largest contour that includes the current robot position inside.
-After that, find contours that are inside the largest contour.
 As we can see by intuition, the robot can move everywhere inside the largest contour, except for the contours inside the largest contour.
-Therefore, the walkable area can be expressed as the inside area of _largest contour_ except for the child contours.
+Therefore, the walkable area can be expressed as the inside area of _largest contour_ except for the _contourExceptions.
+
+This function returns the largest contour containing the current position _contours(idxLargest)_, the exception contours _contourExceptions_, and their indexes, _idxLargest_ and _idxException.
