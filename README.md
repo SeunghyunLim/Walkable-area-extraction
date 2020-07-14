@@ -26,6 +26,8 @@ This function returns
 - __contourExceptions__ : the exception contours
 - __idxLargest__ and __idxException__ : their indexes
 
+<center><img src="https://github.com/SeunghyunLim/Walkable-area-extraction/blob/master/img/contours_example.PNG" alt="drawing" width="980"/></center>
+
 Find walkable and reachable area from the binary map, considering the current robot position, _x_real_ and _y_real_. 
 After find every contour in the binary map, rearrange contours according to their contour area size. 
 First, find the largest contour that includes the current robot position inside.
