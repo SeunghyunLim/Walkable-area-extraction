@@ -31,3 +31,11 @@ After find every contour in the binary map, rearrange contours according to thei
 First, find the largest contour that includes the current robot position inside.
 As we can see by intuition, the robot can move everywhere inside the largest contour, except for the contours inside the largest contour.
 Therefore, the walkable area can be expressed as the inside area of _largest contour_ except for the _contourExceptions.
+
+
+### 3. random_walkable_goal
+```bash
+def random_walkable_goal(area, x_range, y_range, verbose=0):
+  return (y, x)
+```
+This function returns the random position which is reachable from the current position. __area__ should be defined by the function __walkable_area_contour_.
