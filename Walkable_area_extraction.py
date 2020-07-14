@@ -13,7 +13,6 @@ def convert2list(img):
     for i in range(width):
         for j in range(height):
             maze[j][i] = 1 if img[j][i] > 0 else 0
-
     return maze.tolist()
 
 def img2binList(img, lenWidth, GRID_SIZE=50, verbose=0):
