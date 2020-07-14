@@ -2,7 +2,6 @@ import cv2
 import imutils
 import numpy as np
 import matplotlib.pyplot as plt
-import pyfmm
 import time
 import random
 
@@ -18,12 +17,11 @@ def convert2list(img):
     return maze.tolist()
 
 def img2binList(img, lenWidth, GRID_SIZE=50, verbose=0):
-    global DISTANCECOSTMAP
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     _, unreversed_gray = cv2.threshold(gray, 112, 255, cv2.THRESH_BINARY)
     _, gray = cv2.threshold(gray, 112, 255, cv2.THRESH_BINARY_INV)
     if verbose:
-        cv2.imshow("img", gray)
+        cv2.imshow("Reversed binary", gray)
         cv2.waitKey(0)
 
     cnts = cv2.findContours(gray.copy(), cv2.RETR_EXTERNAL,
@@ -48,7 +46,7 @@ def img2binList(img, lenWidth, GRID_SIZE=50, verbose=0):
 
     if verbose:
         # print("found largest contour outline")
-        cv2.imshow("img", tmp)
+        cv2.imshow("Contour lectangulars", tmp)
         cv2.waitKey(0)
 
     # print("cropping image as largest contour")
@@ -56,11 +54,7 @@ def img2binList(img, lenWidth, GRID_SIZE=50, verbose=0):
     gray = gray[y:y + h, x:x + w]
     unreversed_gray = unreversed_gray[y:y + h, x:x + w]
     if verbose:
-        cv2.imshow("img", cv2.resize(gray, None, fx=0.5, fy=0.5, interpolation=cv2.INTER_NEAREST))
-        cv2.waitKey(0)
-    if verbose:
-        print("Ya")
-        cv2.imshow("img", cv2.resize(unreversed_gray, None, fx=0.5, fy=0.5, interpolation=cv2.INTER_NEAREST))
+        cv2.imshow("Cropped image", cv2.resize(gray, None, fx=0.5, fy=0.5, interpolation=cv2.INTER_NEAREST))
         cv2.waitKey(0)
     global mapWidth
     global mapHeight
@@ -68,21 +62,11 @@ def img2binList(img, lenWidth, GRID_SIZE=50, verbose=0):
     mapHeight = (int)((h / w) * lenWidth // GRID_SIZE)
     print("the map will be created by the size: " + str(mapWidth) + " X " + str(mapHeight))
     resized_gray = imutils.resize(gray, width=mapWidth)  # resize the map for convolution
-    resized_unreversed_gray = imutils.resize(unreversed_gray, width=mapWidth)
     _, resized_gray = cv2.threshold(resized_gray, 1, 255, cv2.THRESH_BINARY)
-    _, resized_unreversed_gray = cv2.threshold(resized_unreversed_gray, 0, 255, cv2.THRESH_BINARY)
-    if verbose:
-        cv2.imshow("img", resized_gray)
-        cv2.waitKey(0)
-    if verbose:
-        print("way")
-        cv2.imshow("img", resized_unreversed_gray)
-        cv2.waitKey(0)
+
     maze = convert2list(resized_gray)
-    reversed_maze = convert2list(resized_unreversed_gray)
     my_maze = np.array(maze)
-    solution = pyfmm.march(my_maze == 1, batch_size=10000)[0] # NOTE : white area means walkable area
-    DISTANCECOSTMAP = solution
+
 
     # cv2.destroyAllWindows()
     return maze
@@ -91,9 +75,8 @@ def walkable_area_contour(maze, x_real, y_real, verbose=0):
     maze = np.array(maze).astype(np.uint8)
     maze *= 255
     maze = cv2.resize(maze, None, fx=7, fy=7, interpolation=cv2.INTER_NEAREST)
-    _, reversed_maze = cv2.threshold(maze, 112, 255, cv2.THRESH_BINARY_INV)
-    contoured_maze = reversed_maze
-    contours, hierarchy = cv2.findContours(reversed_maze, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    _, contoured_maze = cv2.threshold(maze, 112, 255, cv2.THRESH_BINARY_INV)
+    contours, hierarchy = cv2.findContours(contoured_maze, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     idxLargest = 0
     idxException = []
     areaLargest = 0
@@ -162,7 +145,6 @@ def random_walkable_goal(area, x_range, y_range, verbose=0):
     contourExceptions = area[1]
     idxLargest = area[2]
     while True:
-        print("hello")
         count = 0
         x = random.randrange(x_range)
         y = random.randrange(y_range)
@@ -187,13 +169,13 @@ def random_walkable_goal(area, x_range, y_range, verbose=0):
 if __name__ == '__main__':
     #img = cv2.imread("E5_223.jpg")
     img = cv2.imread("lobby3.jpg")
-    cv2.imshow('Sample A* algorithm run with distance cost', img)
+    cv2.imshow('Original map image', img)
     cv2.waitKey(0)
     starttime = time.time()
-    maze = img2binList(img, lenWidth=500.0, GRID_SIZE=5, verbose=0)  # all unit is cm
+    maze = img2binList(img, lenWidth=500.0, GRID_SIZE=5, verbose=1)  # all unit is cm
     x_real_initial = 20
     y_real_initial = 20
-    area = walkable_area_contour(maze, x_real_initial, y_real_initial, verbose=1)
+    area = walkable_area_contour(maze, x_real_initial, y_real_initial, verbose=0)
     print("time :", time.time() - starttime)
     while True:
         try:
