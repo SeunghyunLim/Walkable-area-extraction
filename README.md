@@ -38,4 +38,7 @@ Therefore, the walkable area can be expressed as the inside area of _largest con
 def random_walkable_goal(area, x_range, y_range, verbose=0):
   return (y, x)
 ```
-This function returns the random position which is reachable from the current position. __area__ should be defined by the function __walkable_area_contour_.
+- This function returns the random position (y, x) which is reachable from the current position. 
+- Input variable __area__ should be defined by the function __walkable_area_contour__.
+
+Using the result of the function __walkable_area_contour__, this function returns the random goal position which is in walkable area.
