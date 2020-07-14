@@ -126,9 +126,6 @@ def walkable_area_contour(maze, x_real, y_real, verbose=0):
     # smaller_contour_list means the list of indext that has smaller bonding boxes than idxLargest
 
     # check the contours in smaller_contour_index whether they are included in idxLargest or not
-#    for k in smaller_contour_index:
-#        cnt = contours[k]
-#        M = cv2.moments
     for i in smaller_contour_index:
         if hierarchy[0][i][3] == -1:
             # when the contour with i index are not included in any other contour
@@ -145,11 +142,6 @@ def walkable_area_contour(maze, x_real, y_real, verbose=0):
                     break
                 else:
                     j = hierarchy[0][j][3]
-    print(idxException)
-
-    if idxLargest == 0:
-        reference_idx = 0
-    print(smaller_contour_index)
 
     for i in idxException:
         contourExceptions.append(contours[i])
@@ -164,13 +156,11 @@ def walkable_area_contour(maze, x_real, y_real, verbose=0):
     return (contours[idxLargest], contourExceptions, idxLargest, idxException)
 
 
-def curiosityEngine(area, x_range, y_range, verbose=0):
+def random_walkable_goal(area, x_range, y_range, verbose=0):
     starting_time = time.time()
     contour = area[0]
     contourExceptions = area[1]
     idxLargest = area[2]
-    idxException = area[3]
-
     while True:
         print("hello")
         count = 0
@@ -185,7 +175,7 @@ def curiosityEngine(area, x_range, y_range, verbose=0):
             for c in contourExceptions:
                 if cv2.pointPolygonTest(c, (x * 7, y * 7), False) == -1:
                     count += 1
-            if count == len(idxException):
+            if count == len(contourExceptions):
                 return (y, x)
                 break
         #    if cv2.pointPolygonTest(reference_contour, (x * 7, y * 7), False) == -1:
@@ -210,7 +200,7 @@ if __name__ == '__main__':
             # start = (7, 7)
             # start = (10, 25)
             start = (x_real_initial, y_real_initial)
-            end = curiosityEngine(area, mapWidth, mapHeight)
+            end = random_walkable_goal(area, mapWidth, mapHeight)
             print("Start = ", start, "and End = ", end)
             showmaze = np.array(maze).astype(np.uint8)
             showmaze *= 255
