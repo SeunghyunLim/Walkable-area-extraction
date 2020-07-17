@@ -138,7 +138,7 @@ def walkable_area_contour(maze, x_real, y_real, verbose=0):
     return (contours[idxLargest], contourExceptions, idxLargest, idxException)
 
 
-def random_walkable_goal(area, x_range, y_range, verbose=0):
+def random_reachable_goal(area, x_range, y_range, verbose=0):
     starting_time = time.time()
     contour = area[0]
     contourExceptions = area[1]
@@ -181,7 +181,7 @@ if __name__ == '__main__':
             # start = (7, 7)
             # start = (10, 25)
             start = (x_real_initial, y_real_initial)
-            end = random_walkable_goal(area, mapWidth, mapHeight)
+            end = random_reachable_goal(area, mapWidth, mapHeight)
             print("Start = ", start, "and End = ", end)
             showmaze = np.array(maze).astype(np.uint8)
             showmaze *= 255
