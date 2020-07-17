@@ -8,9 +8,9 @@ def img2binList(img, lenWidth, GRID_SIZE=50, verbose=0):
 - Convert RGB image to binary list. In this function, the image file is cropped first, and then converted to binary list. 
 - Parameters: __lenWidth__ is the actual width of the map in _cm_ scale, and __GRID_SIZE__ is the actual size of the grid in _cm_ scale.
 
-| Original Image (SLAM) | Cropped Image | Binary List |
-|---|---|---|
-|![a](https://github.com/SeunghyunLim/Walkable-area-extraction/blob/master/img/original_map_image.png)|![a](https://github.com/SeunghyunLim/Walkable-area-extraction/blob/master/img/cropped_map_image.png)|![a](https://github.com/SeunghyunLim/Walkable-area-extraction/blob/master/img/cropped_binary_list.png)|
+| Original Map | SLAM result | Cropped Image | Binary List |
+|---|---|---|---|
+|![a](https://github.com/SeunghyunLim/Walkable-area-extraction/blob/master/img/real_map_image.png)|![a](https://github.com/SeunghyunLim/Walkable-area-extraction/blob/master/img/original_map_image.png)|![a](https://github.com/SeunghyunLim/Walkable-area-extraction/blob/master/img/cropped_map_image.png)|![a](https://github.com/SeunghyunLim/Walkable-area-extraction/blob/master/img/cropped_binary_list.png)|
 
 
 ### 2. walkable_area_contour
