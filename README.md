@@ -1,4 +1,11 @@
 # Walkable-area-extraction
+This repository deals with a simple application of cv2 contours to extract some walkable area or reachable random goal point for the mobile robot. SLAM map and the current position of the robot is needed. 
+
+This function can be used to check whether the goal point is reasonable, or to generate random goals for the mobile robot.
+
+## How it works
+Firstly, input image of SLAM map is converted to binary grid map. Then contours are extracted from the map, and used to specify the reachable area from the robot's current position.
+
 ## Main functions
 ### 1. img2binList
 ```bash
