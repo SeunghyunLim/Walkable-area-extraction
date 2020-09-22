@@ -3,6 +3,8 @@ This repository deals with a simple application of cv2 contours to extract some 
 
 This function can be used to check whether the goal point is reasonable, or to generate random goals for the mobile robot.
 
+<center><img src="https://github.com/SeunghyunLim/Walkable-area-extraction/blob/master/img/sample_case.png" alt="drawing" width="480"/></center>
+
 ## How it works
 Firstly, input image of SLAM map is converted to binary grid map. Then contours are extracted from the map, and used to specify the reachable area from the robot's current position.
 
